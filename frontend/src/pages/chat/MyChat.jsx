@@ -21,8 +21,6 @@ const MyChat = () => {
   const [message, setMessage] = useState("");
   const [conversation, setConversation] = useState([]);
 
-  console.log("logged_user : ", logged_user);
-
   socket.on("get_connected_users", ({ connected_users }) => {
     const connected_users_without_me = connected_users.filter(
       (user) => user._id !== logged_user._id
@@ -65,7 +63,9 @@ const MyChat = () => {
   }, [conversation]);
 
   useEffect(() => {
-    get_conversation({ from: logged_user?._id, to });
+    if (to) {
+      get_conversation({ from: logged_user?._id, to });
+    }
   }, [logged_user, to]);
 
   useEffect(() => {
@@ -86,10 +86,42 @@ const MyChat = () => {
         return;
       }
       const conversation_from_to = result.data;
-      console.log("conversation from to : ", result);
       setConversation(conversation_from_to);
     } catch (error) {
       console.log("Mychat.jsx get conversation : ", error.message);
+    }
+  };
+
+  // sending media :
+  const handleFileUpload = async (event) => {
+    const file = event.target.files[0];
+
+    if (file === undefined) return;
+
+    try {
+      const media = new FormData();
+      media.append("from", logged_user._id);
+      media.append("to", to);
+      media.append("media", file);
+      const result = await axios.post(
+        `${SERVER_URL}/conversation/media`,
+        media,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data", // Set the content type for FormData
+          },
+        }
+      );
+      if (result.data.error) {
+        console.log("error while media converation : ", result.data.error);
+        alert(result.data.error);
+        return;
+      }
+      console.log("conversation from to : ", result);
+      socket.emit("send_media", { media_message: result.data });
+      alert("media sent");
+    } catch (error) {
+      console.log("Mychat.jsx media conversation : ", error.message);
     }
   };
 
@@ -128,6 +160,7 @@ const MyChat = () => {
               message={message}
               setMessage={setMessage}
               sendMessage={handleSendMessageClick}
+              handleFileUpload={handleFileUpload}
             />
           </div>
         </div>

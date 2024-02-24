@@ -2,8 +2,9 @@ import React from "react";
 
 import "./Input.css";
 
-const Input = ({ message, setMessage, sendMessage }) => (
+const Input = ({ message, setMessage, sendMessage, handleFileUpload }) => (
   <div className="form">
+    <input type="file" className="file" onChange={handleFileUpload} />
     <input
       className="input"
       type="text"

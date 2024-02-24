@@ -4,6 +4,7 @@ const conversationSchema = mongoose.Schema({
   from: { type: String, required: [true, "select user to chat"] },
   to: { type: String, required: [true, "select user to chat"] },
   body: String,
+  media_url: String,
 });
 
 const conversation = mongoose.model("conversation", conversationSchema);

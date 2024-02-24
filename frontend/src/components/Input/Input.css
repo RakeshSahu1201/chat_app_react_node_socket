@@ -11,25 +11,32 @@
   font-size: 1.2em;
 }
 
-input:focus, textarea:focus, select:focus{
+input:focus,
+textarea:focus,
+select:focus {
   outline: none;
+}
+
+.file {
+  width: 7%;
+  background-color: blue;
 }
 
 .sendButton {
   color: #fff !important;
   text-transform: uppercase;
   text-decoration: none;
-  background: #2979FF;
+  background: #2979ff;
 
   display: inline-block;
   border: none;
   width: 20%;
   height: 77px;
   border-bottom-right-radius: 8px;
-  font-size: 1.0rem;
+  font-size: 1rem;
 }
 
-.send-icon{
+.send-icon {
   width: 15%;
   padding-left: 5%;
 }

@@ -1,5 +1,6 @@
 const express = require("express");
 const { createServer } = require("node:http");
+const fs = require("fs");
 const cors = require("cors");
 const { Server } = require("socket.io");
 const { config } = require("./db/MongoConnection");
@@ -16,6 +17,7 @@ config();
 
 app.use(express.json());
 app.use(cors());
+app.use("/media", express.static("media"));
 
 const io = new Server(server, {
   cors: {
@@ -56,6 +58,12 @@ io.on("connection", (socket) => {
       console.log("create_conversation_error ", error.message);
       callback({ error: error.message });
     }
+  });
+
+  socket.on("send_media", ({ media_message }) => {
+    const from = users.get(media_message.from).socket_id;
+      const to = users.get(media_message.to).socket_id;
+      io.to([from, to]).emit("message_sent", { new_message: media_message });
   });
 });
 
